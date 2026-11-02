@@ -1,0 +1,10 @@
+# Copy to local.properties (gitignored). Do NOT commit local.properties.
+# SDK path is machine-specific.
+
+sdk.dir=C\:\\Users\\YOUR_USER\\AppData\\Local\\Android\\Sdk
+
+# Optional (internal flavor only). Leave unset for store builds.
+# Never put production keys here in a published tree.
+# miguo.defaultApiKey=
+# miguo.defaultAuthBase=https://example.invalid/nm
+# miguo.defaultChatBase=https://example.invalid

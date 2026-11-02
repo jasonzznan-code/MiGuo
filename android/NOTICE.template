@@ -1,0 +1,16 @@
+NOTICE
+======
+
+Product: 米果 (com.miguo.voice)
+Copyright: 【待主体确认：版权方全称与年份】
+License: 【待主体确认】草稿建议 GPL-3.0-or-later（见 LICENSE.PENDING.md；非正式终稿）
+
+This product may include third-party open source software.
+A machine-readable third-party dependency list should be generated at release time
+(e.g. Gradle license report / OSS notice). 【待法务/主体确认清单与 URL】
+
+Source code URL (public): 【待确认：公开源码仓库 URL】
+Privacy policy URL: 【待运营确认】
+Account deletion / 注销 API: 【待服务端确认】
+
+Generated as template on 2026-11-01. Do not treat placeholder text as final legal terms.

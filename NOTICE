@@ -1,0 +1,46 @@
+NOTICE
+======
+
+Product: 米果 (com.miguo.voice)
+Copyright: 2026 米果 / Miguo contributors
+License: GNU General Public License v3.0 or later (GPL-3.0-or-later)
+  See the LICENSE file in this repository (and in android/).
+
+Scope
+-----
+This NOTICE and the accompanying LICENSE apply to the **Android client**
+source tree (`android/`) and assets distributed with that client.
+Server-side components and other platform clients are **not** covered by
+a public-source commitment in this file unless separately stated.
+
+Source code URL (public)
+------------------------
+https://github.com/jasonzznan-code/MiGuo
+Tag: v1.0.0 (Android 1.0.0 / versionCode 102, store strategy A)
+
+Privacy policy / Contact
+------------------------
+Privacy: https://ai.njzyb.com:3010/privacy
+Contact email: 420603523@qq.com
+Operator display name: 米果智能（个人开发者）
+
+Third-party open source software
+--------------------------------
+This product may include the following third-party components distributed
+with the Android App (excerpt from
+`android/app/src/main/assets/opensource_licenses.md`). A fuller
+machine-readable report may be generated at release time.
+
+| Component | Version | License |
+|---|---|---|
+| AndroidX Compose (BOM 2024.09.03: UI / Material3) | BOM-locked | Apache License 2.0 |
+| AndroidX Activity Compose | 1.9.2 | Apache License 2.0 |
+| AndroidX Lifecycle | 2.8.6 | Apache License 2.0 |
+| AndroidX Core KTX | 1.13.1 | Apache License 2.0 |
+| OkHttp | 4.12.0 | Apache License 2.0 |
+| Kotlin standard library | as built | Apache License 2.0 |
+
+Original artwork
+----------------
+Miguo character art and launcher icon: original by Jason.
+Not licensed for third-party redistribution via this NOTICE.

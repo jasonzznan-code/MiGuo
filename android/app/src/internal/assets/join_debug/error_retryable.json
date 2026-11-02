@@ -1,0 +1,33 @@
+{
+  "task_id": "task-error-mail",
+  "conversation_id": "sess-primary",
+  "current_step": 2,
+  "total_steps": 3,
+  "status": "error",
+  "next_actions": [
+    "retry"
+  ],
+  "waitingReason": null,
+  "error_code": "UPLOAD_TRANSIENT",
+  "retryable": true,
+  "recoverable": true,
+  "checkpoint": {
+    "stepId": "upload_attachment",
+    "stepIndex": 2,
+    "label": "上传附件",
+    "resumeSupported": true,
+    "payloadJson": "{\"file\":\"weekly.docx\",\"attempt\":1}"
+  },
+  "confirm_token": null,
+  "content_revision": 1,
+  "title": "发送周报邮件",
+  "category": "work",
+  "summary": "附件上传失败（可重复）：网络抖动，允许原地重试。",
+  "remind_at": null,
+  "next_hint": "可点「重试」再次上传附件。",
+  "session_id": "sess-primary",
+  "service_ids": [],
+  "created_at": "2026-10-29T08:00:00+08:00",
+  "updated_at": "2026-10-29T09:10:00+08:00",
+  "_scenario": "repeatable_error"
+}

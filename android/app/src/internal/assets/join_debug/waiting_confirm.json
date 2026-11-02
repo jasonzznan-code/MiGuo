@@ -1,0 +1,37 @@
+{
+  "task_id": "task-waiting-ticket",
+  "conversation_id": "sess-primary",
+  "current_step": 2,
+  "total_steps": 3,
+  "status": "waiting",
+  "next_actions": [
+    "confirm",
+    "modify",
+    "view_detail"
+  ],
+  "waitingReason": "user_confirm",
+  "error_code": null,
+  "retryable": false,
+  "recoverable": true,
+  "checkpoint": {
+    "stepId": "review_reminder",
+    "stepIndex": 2,
+    "label": "等待用户确认提醒",
+    "resumeSupported": false,
+    "payloadJson": "{\"remind_at\":\"2026-10-31 09:00\"}"
+  },
+  "confirm_token": "ct-seed-waiting01",
+  "content_revision": 1,
+  "title": "周六出行准备",
+  "category": "travel",
+  "summary": "提醒类 · 周六出行准备。请核对提醒内容。确认后才会进入执行。",
+  "remind_at": "2026-10-31 09:00",
+  "next_hint": "请核对时间与内容。确认后才会创建提醒并加入计划。",
+  "session_id": "sess-primary",
+  "service_ids": [
+    "svc-calendar-stub"
+  ],
+  "created_at": "2026-10-29T08:00:00+08:00",
+  "updated_at": "2026-10-29T09:20:00+08:00",
+  "_note": "UI confirm 统一为 waiting；无独立 confirm 状态"
+}

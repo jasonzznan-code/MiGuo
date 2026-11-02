@@ -1,0 +1,183 @@
+{
+  "config_version": 1,
+  "updated_at": "2026-10-26T00:00:00+08:00",
+  "min_client_version": {
+    "ios": "0.1.0",
+    "android": "0.1.0",
+    "pc": "0.1.0",
+    "harmony": "0.1.0"
+  },
+  "latest_version": {
+    "ios": "0.1.0",
+    "android": "0.1.0",
+    "pc": "0.1.0",
+    "harmony": "0.1.0"
+  },
+  "update_url": {
+    "ios": "",
+    "android": "",
+    "pc": "",
+    "harmony": ""
+  },
+  "voice": {
+    "output_format": "mp3",
+    "sample_rate": 16000,
+    "frame_ms": 20,
+    "barge_in": false,
+    "vad": {
+      "threshold": 0.5,
+      "min_speech_ms": 250,
+      "min_silence_ms": 700
+    },
+    "voice": null,
+    "use_memory": true,
+    "resume_listen_delay_ms": 200
+  },
+  "playback": {
+    "watchdog_interval_ms": 500,
+    "stall_timeout_s": 5,
+    "status_log_interval_s": 2
+  },
+  "labels": {
+    "idle": "点一下开始",
+    "starting": "连接中…",
+    "listening": "正在听",
+    "user_speaking": "你在说话",
+    "thinking": "米果在想…",
+    "speaking": "米果在说",
+    "suspended": "已暂停",
+    "reconnecting": "重连中（第 {n} 次）",
+    "stopping": "正在结束…",
+    "app_title": "米果",
+    "caption_empty": "点下方按钮开始，像打电话一样直接说话。\n米果说完后会自动继续听。",
+    "interrupted_suffix": " …（被打断）",
+    "failed_prefix": "出错：",
+    "fix_prefix": "怎么办：",
+    "retry_hint": "点按钮重试",
+    "retry": "重试",
+    "degraded_prefix": "服务器降级：",
+    "a11y_start": "开始对话",
+    "a11y_stop": "结束对话",
+    "update_required": "App 版本过低（最低 {min}），请更新后再用",
+    "update_available": "有新版本 {latest}",
+    "update_open": "去更新"
+  },
+  "errors": {
+    "too_many_sessions": {
+      "title": "语音会话已满",
+      "message": "这个 user_id 已经有 2 个进行中的语音会话（例如 PC 端和另一台设备）。{server_message}",
+      "fix": "先结束其他设备上的对话再试；刚断线的旧连接最多约 40 秒后才会被服务器释放。也可以在服务器 .env 调大 MEMORY_VOICE_MAX_SESSIONS_PER_USER。"
+    },
+    "bad_user": {
+      "title": "user_id 不合法",
+      "message": "user_id 只能包含字母、数字、_ - . @，长度 1–64。",
+      "fix": "到设置里修改 user_id。"
+    },
+    "bad_request": {
+      "title": "请求参数被服务器拒绝",
+      "message": "{server_message}",
+      "fix": "检查设置里的音色/语速/输出格式；或服务器版本与 App 不匹配。"
+    },
+    "start_timeout": {
+      "title": "开始超时",
+      "message": "连接后 15 秒内没有发出 start。",
+      "fix": "网络可能过慢，重试一次。"
+    },
+    "idle_timeout": {
+      "title": "长时间无数据，服务器已结束会话",
+      "message": "{server_message}",
+      "fix": "点一下重新开始。"
+    },
+    "session_timeout": {
+      "title": "单次会话达到最长时长（30 分钟）",
+      "message": "{server_message}",
+      "fix": "点一下继续（同一个记忆会话会延续）。"
+    },
+    "stt_unavailable": {
+      "title": "语音识别（faster-whisper）不可用",
+      "message": "{server_message}",
+      "fix": "在服务器上运行 setup_voice.ps1 / verify_voice.ps1 检查 STT 模型。"
+    },
+    "tts_unavailable": {
+      "title": "语音合成（edge-tts）不可用",
+      "message": "{server_message}",
+      "fix": "edge-tts 需要服务器能访问外网；文字回复仍会显示。"
+    },
+    "llm_unavailable": {
+      "title": "大模型（Ollama）不可用",
+      "message": "{server_message}",
+      "fix": "确认服务器上 Ollama 已启动且有 qwen3:8b。"
+    },
+    "turn_failed": {
+      "title": "这一轮处理失败",
+      "message": "{server_message}",
+      "fix": null
+    },
+    "internal": {
+      "title": "服务器内部错误",
+      "message": "{server_message}",
+      "fix": "查看服务器 logs\\server.err.log。"
+    },
+    "server_error": {
+      "title": "服务器错误（{code}）",
+      "message": "{server_message}",
+      "fix": null
+    },
+    "auth_failed": {
+      "title": "鉴权失败（HTTP {status}）",
+      "message": "服务器拒绝了 WebSocket 握手：API Key 错误或未填写（服务器设置了 MEMORY_API_KEY）。",
+      "fix": "到设置里填写与服务器 .env 中 MEMORY_API_KEY 完全一致的 API Key。"
+    },
+    "not_found": {
+      "title": "找不到语音接口（HTTP 404）",
+      "message": "服务器上没有 /api/v1/voice/session。",
+      "fix": "确认地址指向 memory_core（默认端口 8765），并且服务端版本包含语音层。"
+    },
+    "handshake": {
+      "title": "握手失败（HTTP {status}）",
+      "message": "WebSocket 升级被拒绝。",
+      "fix": "检查反向代理是否透传 WebSocket（Upgrade/Connection 头）。"
+    },
+    "close_4400": {
+      "title": "user_id 不合法（关闭码 4400）",
+      "message": "user_id 只能包含字母、数字、_ - . @，长度 1–64。",
+      "fix": "到设置里修改 user_id。"
+    },
+    "closed_4000": {
+      "title": "服务器结束了会话（关闭码 4000）",
+      "message": "超时、错误或并发超限。",
+      "fix": null
+    },
+    "closed": {
+      "title": "连接已关闭（{code}）",
+      "message": "{reason}",
+      "fix": null
+    },
+    "loopback": {
+      "title": "地址是 127.0.0.1 / localhost",
+      "message": "在 iPhone 上 127.0.0.1 指向手机自己，不是电脑。",
+      "fix": "把服务器地址改成电脑的局域网 IP（例如 http://192.168.1.10:8765），并让服务端监听 0.0.0.0（见 README）。"
+    },
+    "unreachable": {
+      "title": "连不上服务器（{code}）",
+      "message": "{description}",
+      "fix": "① 电脑上的 MiguoMemoryCore 服务默认只监听 127.0.0.1，需要改成 0.0.0.0 或局域网 IP；② Windows 防火墙放行 TCP 8765；③ 手机和电脑在同一 Wi-Fi，或都连上 Tailscale；④ 首次连接时 iOS 会询问“本地网络”权限，要点允许。"
+    },
+    "ats": {
+      "title": "被 App Transport Security 拦截",
+      "message": "{description}",
+      "fix": "Info.plist 已放行局域网/100.64.0.0/10/ts.net；其他公网 http 地址请改用 https/wss，或自行在 Info.plist 加例外。"
+    },
+    "network": {
+      "title": "网络错误",
+      "message": "{description}",
+      "fix": null
+    },
+    "mic_denied": {
+      "title": "没有麦克风权限",
+      "message": "米果需要麦克风才能听你说话。",
+      "fix": "到 设置 → 隐私与安全性 → 麦克风 → 米果 打开。"
+    }
+  },
+  "notice": null
+}

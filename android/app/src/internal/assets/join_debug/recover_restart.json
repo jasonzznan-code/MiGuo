@@ -1,0 +1,38 @@
+{
+  "task_id": "task-recover-booking",
+  "conversation_id": "sess-primary",
+  "current_step": 2,
+  "total_steps": 4,
+  "status": "recover",
+  "next_actions": [
+    "restart_after_review",
+    "cancel"
+  ],
+  "waitingReason": null,
+  "error_code": "RESUME_UNSUPPORTED",
+  "retryable": false,
+  "recoverable": true,
+  "checkpoint": {
+    "stepId": "hold_seat",
+    "stepIndex": 2,
+    "label": "占座中断（不可续跑）",
+    "resumeSupported": false,
+    "payloadJson": "{\"train\":\"G123\",\"date\":\"2026-11-01\"}"
+  },
+  "confirm_token": null,
+  "content_revision": 1,
+  "title": "确认高铁订票",
+  "category": "travel",
+  "summary": "后端暂不支持从中断点恢复。请核对行程后重新开始，不要点「继续执行」。",
+  "remind_at": null,
+  "next_hint": "核对后重新开始",
+  "session_id": "sess-primary",
+  "service_ids": [
+    "svc-maps-stub"
+  ],
+  "created_at": "2026-10-29T08:00:00+08:00",
+  "updated_at": "2026-10-30T11:00:00+08:00",
+  "_scenario": "recover_restart",
+  "_ui_copy": "核对后重新开始",
+  "_forbidden_copy": "继续执行"
+}
