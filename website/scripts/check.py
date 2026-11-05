@@ -64,7 +64,7 @@ PINNED_VC102 = {
     "gitTag": "v1.0.0",
     "gitCommit": "5d9f086ba52ec08dc004fbe6ee1db2a40c991295",
     "channel": "storeRelease",
-    "supersededBecause": "已被含 AI 标识的 vc104 最终包取代",
+    "supersededBecause": "被含「内容由 AI 生成」的 vc104 最终包取代",
 }
 
 FORBIDDEN = (
@@ -262,12 +262,18 @@ def negative_checks(failures: list[str]) -> None:
     expect_manifest_error(with_copy(two_current), "more than one release", failures)
 
     def published_without_url(data: dict) -> None:
-        data["releases"][0]["artifact"]["status"] = "published"
+        artifact = data["releases"][0]["artifact"]
+        artifact["status"] = "published"
+        artifact["httpsUrl"] = None
+        artifact["fileName"] = None
 
     expect_manifest_error(with_copy(published_without_url), "httpsUrl and fileName", failures)
 
     def unpublished_with_url(data: dict) -> None:
-        data["releases"][0]["artifact"]["httpsUrl"] = "https://example.com/app.apk"
+        artifact = data["releases"][0]["artifact"]
+        artifact["status"] = "not_published"
+        artifact["httpsUrl"] = "https://example.com/app.apk"
+        artifact["fileName"] = None
 
     expect_manifest_error(with_copy(unpublished_with_url), "cannot carry a URL", failures)
 
@@ -487,10 +493,11 @@ def check_rendered(dest: Path, data: dict, release: dict, failures: list[str]) -
     return urls
 
 
-def check_links(urls: list[str], failures: list[str]) -> None:
+def check_links(urls: list[str], failures: list[str], skip: set[str] | None = None) -> None:
     seen: set[str] = set()
+    skipped = skip or set()
     for url in urls:
-        if url in seen:
+        if url in seen or url in skipped:
             continue
         seen.add(url)
         try:
@@ -650,8 +657,9 @@ def main() -> int:
         if content_type.lower().startswith("text/html"):
             failures.append("download URL returned HTML instead of an apk")
         verified = digest == release["sha256"] and not content_type.lower().startswith("text/html")
-    if failures and artifact["status"] == "published":
-        verified = False
+    if failures:
+        print("\n".join(failures))
+        return 1
     with tempfile.TemporaryDirectory() as tmp:
         dest = Path(tmp) / "dist"
         try:
@@ -660,7 +668,8 @@ def main() -> int:
             print(f"render: {exc}")
             return 1
         urls = check_rendered(dest, data, release, failures)
-        check_links(urls, failures)
+        verified_download = {artifact["httpsUrl"]} if artifact["status"] == "published" else set()
+        check_links(urls, failures, skip=verified_download)
         check_privacy_mirror(data, failures)
         js = WEBSITE / "src/site.js"
         syntax = subprocess.run(["node", "--check", str(js)], cwd=REPO, text=True, capture_output=True)
