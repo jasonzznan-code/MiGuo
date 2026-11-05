@@ -360,7 +360,7 @@ def check_page(path: Path, release: dict, failures: list[str]) -> list[str]:
     urls: list[str] = []
     for anchor in parser.anchors:
         href = anchor.get("href") or ""
-        if href.startswith(("mailto:", "#", "index.html", "product.html", "download.html", "privacy.html", "opensource.html", "contact.html", "release-manifest.json", "store-materials.txt", "assets/")):
+        if href.startswith(("mailto:", "#", "index.html", "product.html", "download.html", "privacy.html", "opensource.html", "contact.html", "release-manifest.json", "assets/")):
             if anchor.get("target") == "_blank" and "noopener" not in (anchor.get("rel") or ""):
                 failures.append(f"{path.name} blank target is missing rel: {href}")
             continue
@@ -449,7 +449,6 @@ def check_rendered(dest: Path, data: dict, release: dict, failures: list[str]) -
         "assets/site.js",
         "assets/migo.png",
         "release-manifest.json",
-        "store-materials.txt",
         "robots.txt",
     }
     found = set(tree_bytes(dest))
@@ -457,14 +456,8 @@ def check_rendered(dest: Path, data: dict, release: dict, failures: list[str]) -
         failures.append(f"dist files differ from the expected set: {sorted(found ^ expected)}")
     for name in ("index.html", "product.html", "download.html", "privacy.html", "opensource.html", "contact.html", "404.html"):
         urls.extend(check_page(dest / name, release, failures))
-    materials = (dest / "store-materials.txt").read_text(encoding="utf-8")
-    scan_text("store-materials.txt", materials, failures)
-    sha = release["sha256"]
-    if f"SHA-256：{sha}" not in materials or "客服电话：未提供" not in materials:
-        failures.append("store materials drifted from the manifest")
-    if release["artifact"]["status"] == "not_published":
-        if "公开下载地址：无" not in materials or ".apk" in materials:
-            failures.append("store materials imply a download file")
+    if any(path.name.startswith("store-materials") for path in dest.rglob("*")):
+        failures.append("dist still contains a store-materials file")
     manifest_copy = (dest / "release-manifest.json").read_bytes()
     if manifest_copy != build.MANIFEST_PATH.read_bytes():
         failures.append("dist manifest is not the source manifest")

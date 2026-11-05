@@ -393,38 +393,6 @@ def _footer(values: dict[str, str]) -> str:
     return fill(template, values, raw=set())
 
 
-def store_materials(data: dict, release: dict) -> str:
-    product = data["product"]
-    artifact = release["artifact"]
-    download = artifact["httpsUrl"] if artifact["status"] == "published" else "无"
-    lines = [
-        "米果 Android 版本核对",
-        "本文件由 release-manifest.json 生成。准备材料时只抄这里的版本号、校验值和下载地址，不要另存一份不同的记录。",
-        "",
-        f"应用名：{product['nameZh']}",
-        f"英文名：{product['nameEn']}",
-        f"包名：{product['applicationId']}",
-        f"versionName：{release['versionName']}",
-        f"versionCode：{release['versionCode']}",
-        f"渠道：{release['channel']}",
-        f"SHA-256：{release['sha256']}",
-        f"更新日期：{release['updatedOn']}",
-        f"Git 标签：{release['gitTag']}",
-        f"Git 提交：{release['gitCommit']}",
-        f"隐私政策：{product['privacyCanonicalUrl']}",
-        f"联系邮箱：{product['contactEmail']}",
-        "客服电话：未提供",
-        f"公开下载地址：{download}",
-        "应用商店审核进度：未记录",
-        f"源码：{product['sourceUrl']}",
-        "",
-        "范围：",
-        release["publicScope"],
-        "",
-    ]
-    return "\n".join(lines)
-
-
 def render(dest: Path, data: dict | None = None, *, download_verified: bool = False) -> dict:
     data = load_manifest() if data is None else data
     release = validate_manifest(data)
@@ -446,7 +414,6 @@ def render(dest: Path, data: dict | None = None, *, download_verified: bool = Fa
     shutil.copyfile(WEBSITE / "src/site.css", dest / "assets/site.css")
     shutil.copyfile(WEBSITE / "src/site.js", dest / "assets/site.js")
     shutil.copyfile(MANIFEST_PATH, dest / "release-manifest.json")
-    (dest / "store-materials.txt").write_text(store_materials(data, release), encoding="utf-8")
     (dest / "robots.txt").write_text("User-agent: *\nAllow: /\n", encoding="utf-8")
     raw = {"NAV", "MAIN", "FOOTER"}
     for filename, template_name, title, description, current in pages:
