@@ -2,6 +2,7 @@ package com.miguo.voice.transport
 
 import android.util.Log
 import com.miguo.voice.protocol.ClientConfig
+import com.miguo.voice.protocol.DeepSeekProviderContract
 import com.miguo.voice.protocol.ServerEndpoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -51,10 +52,12 @@ object ClientConfigApi {
                     resp.code != 200 -> Result.Failed("HTTP ${resp.code}")
                     else -> {
                         val raw = resp.body?.string() ?: ""
+                        // 没有密钥字段时 safe == raw，缓存内容与服务端原文一致。
+                        val safe = DeepSeekProviderContract.redactConfigSecrets(raw)
                         try {
-                            Result.Ok(ClientConfig.parseJson(raw), raw)
+                            Result.Ok(ClientConfig.parseJson(safe), safe)
                         } catch (e: Exception) {
-                            Result.Failed("返回不是 JSON 对象：${e.message}")
+                            Result.Failed(DeepSeekProviderContract.redactLog("返回不是 JSON 对象：${e.message}")!!)
                         }
                     }
                 }
@@ -62,7 +65,7 @@ object ClientConfigApi {
         } catch (e: kotlinx.coroutines.CancellationException) {
             throw e
         } catch (e: Exception) {
-            Log.w(TAG, "[miguo] /client/config 请求失败：$e")
+            Log.w(TAG, "[miguo] /client/config 请求失败：${DeepSeekProviderContract.redactLog(e.toString())}")
             Result.Failed(e.message ?: e.javaClass.simpleName)
         }
     }

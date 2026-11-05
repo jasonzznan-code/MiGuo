@@ -66,6 +66,7 @@ Windows 可用 `gradlew.bat :app:assembleStoreRelease`。
 ## 重要限制（请先读）
 
 - 本导出**不包含**后端 / 中继；自建服务需自行对接。  
+- DeepSeek 官方模型要由服务端保管 `DEEPSEEK_API_KEY` 后才会生效。本仓库没有 memory_core 源码，不能在这里完成真实调用。不含密钥的客户端契约和启用说明见 `docs/deepseek-启用说明.md`。不要把 DeepSeek Key 填进 App。  
 - **internal** 仅为内验调试；请勿将带密钥的内验包对外分发。  
 - 换服/调试后门仅用于 internal；**store 默认关闭**，请勿改成商店默认开启。
 

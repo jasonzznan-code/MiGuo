@@ -15,7 +15,10 @@ import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.net.URLEncoder
 
-/** /api/v1/chat/text（NDJSON 流）与 /api/v1/conversations 的 OkHttp 实现 */
+/**
+ * /api/v1/chat/text（NDJSON 流）与 /api/v1/conversations 的 OkHttp 实现。
+ * 不调用 DeepSeek。模型提供方切换只发生在服务端；这里也不读取 DEEPSEEK_API_KEY。
+ */
 class ChatApi(
     private val endpoint: () -> ServerEndpoint?,
     private val apiKey: () -> String?,

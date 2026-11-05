@@ -1,0 +1,8 @@
+{
+  "llm": {
+    "provider": "deepseek",
+    "enabled": false,
+    "model": "deepseek-flash",
+    "upstream_stream": true
+  }
+}

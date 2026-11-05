@@ -13,6 +13,8 @@ class ServerConfigCompatTest {
 
     @Test fun parsesFactoryFile() {
         assertEquals(1, cfg.configVersion)
+        assertFalse("出厂配置没有 llm 通告，DeepSeek 保持关闭", cfg.llm.serverReportsDeepSeek)
+        assertEquals(LlmProviderNotice.PROVIDER_UNSET, cfg.llm.provider)
         assertEquals("0.1.0", cfg.minClientVersion)
         assertNull("update_url 为空串 → 视为没有", cfg.updateUrl)
         assertEquals("mp3", cfg.voice.outputFormat)

@@ -1,6 +1,7 @@
 package com.miguo.voice.transport
 
 import com.miguo.voice.protocol.ClientConfig
+import com.miguo.voice.protocol.DeepSeekProviderContract
 import com.miguo.voice.protocol.ErrorCatalog
 import com.miguo.voice.protocol.ReadableError
 import com.miguo.voice.protocol.ServerEndpoint
@@ -34,6 +35,9 @@ data class VoiceHealth(
     val llmModel: String?,
     val llmReachable: Boolean?,
     val sessionsActive: Int?,
+    /** 服务端健康检查里的不含密钥通告。缺省 null，不改变摘要文案。 */
+    val llmProvider: String? = null,
+    val llmEnabled: Boolean? = null,
 ) {
     val isDegraded: Boolean get() = status != "ok"
 }
@@ -59,11 +63,19 @@ object VoiceHealthApi {
     private fun JsonObject.b(k: String) = (this[k] as? JsonPrimitive)?.booleanOrNull
     private fun JsonObject.o(k: String) = this[k] as? JsonObject
 
+    /** 新增通告只认 JSON 布尔，避免字符串 "true" 被当成已启用。 */
+    private fun JsonObject?.strictBool(k: String): Boolean? {
+        val p = this?.get(k) as? JsonPrimitive ?: return null
+        if (p.isString || p is kotlinx.serialization.json.JsonNull) return null
+        return p.booleanOrNull
+    }
+
     fun parse(text: String): VoiceHealth {
         val o = ClientConfig.parseJson(text)
         val stt = o.o("stt")
         val tts = o.o("tts")
         val llm = o.o("llm")
+        val providerRaw = llm?.s("provider")?.trim()?.takeIf { it.isNotEmpty() }
         return VoiceHealth(
             status = o.s("status") ?: "unknown",
             problems = (o["problems"] as? JsonArray)?.mapNotNull { (it as? JsonPrimitive)?.contentOrNull } ?: emptyList(),
@@ -73,9 +85,11 @@ object VoiceHealthApi {
             sttDevice = stt?.s("device"),
             ttsProbe = tts?.s("probe"),
             ttsDefaultVoice = tts?.s("default_voice"),
-            llmModel = llm?.s("model"),
+            llmModel = llm?.s("model")?.takeUnless { DeepSeekProviderContract.looksLikeProviderKey(it) },
             llmReachable = llm?.b("reachable"),
             sessionsActive = (o["sessions_active"] as? JsonPrimitive)?.doubleOrNull?.toInt(),
+            llmProvider = providerRaw?.takeUnless { DeepSeekProviderContract.looksLikeProviderKey(it) },
+            llmEnabled = llm.strictBool("enabled"),
         )
     }
 
@@ -112,7 +126,11 @@ object VoiceHealthApi {
                 }
                 if (status != 200) {
                     return@withContext HealthResult.Failed(
-                        ReadableError("health_$status", "健康检查失败（HTTP $status）", body.take(200), retryable = true)
+                        ReadableError(
+                            "health_$status", "健康检查失败（HTTP $status）",
+                            DeepSeekProviderContract.redactLog(body.take(200))!!,
+                            retryable = true,
+                        )
                     )
                 }
                 val h = try { parse(body) } catch (e: Exception) {
