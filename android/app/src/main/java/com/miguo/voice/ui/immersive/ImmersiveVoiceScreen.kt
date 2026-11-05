@@ -588,28 +588,7 @@ private fun ImmersiveCaptionsPanel(
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 12.dp, vertical = 13.dp),
             ) {
-                if (entries.isEmpty()) {
-                    CaptionAssistant("嗨，我是米果。\n今天想聊些什么？")
-                    CaptionUser("周六早上九点，\n提醒我准备出行。")
-                    val demo = when {
-                        agentStatus == AgentStatus.waiting || waitingTask?.status == AgentStatus.waiting ->
-                            "好呀，我已经整理好了。\n你确认一下，我再继续。"
-                        agentStatus == AgentStatus.done -> "好，这次已经完成。"
-                        else -> "我在听。你说完我再整理。"
-                    }
-                    CaptionAssistant(demo)
-                } else {
-                    entries.takeLast(12).forEach { e ->
-                        e.messagePresentation().forEach { msg ->
-                            when (msg.kind) {
-                                ChatMessageKind.USER -> CaptionUser(msg.text)
-                                ChatMessageKind.ASSISTANT ->
-                                    CaptionAssistant(msg.text, showAiGeneratedLabel = msg.showAiGeneratedLabel)
-                                ChatMessageKind.PENDING, ChatMessageKind.ERROR -> Unit
-                            }
-                        }
-                    }
-                }
+                ImmersiveCaptionMessages(entries, agentStatus, waitingTask)
                 waitingTask?.let { task ->
                     Spacer(Modifier.height(8.dp))
                     Column(
@@ -654,6 +633,39 @@ private fun ImmersiveCaptionsPanel(
             contentAlignment = Alignment.Center,
         ) {
             Icon(MigoIcons.Close, contentDescription = null, tint = MigoTokens.Ink, modifier = Modifier.size(19.dp))
+        }
+    }
+}
+
+/**
+ * 沉浸字幕正文。无会话记录时是脚本演示，不标 AI；有记录时只标真实助手正文。
+ */
+@Composable
+internal fun ImmersiveCaptionMessages(
+    entries: List<com.miguo.voice.conversation.ChatEntry>,
+    agentStatus: AgentStatus,
+    waitingTask: Task?,
+) {
+    if (entries.isEmpty()) {
+        CaptionAssistant("嗨，我是米果。\n今天想聊些什么？")
+        CaptionUser("周六早上九点，\n提醒我准备出行。")
+        val demo = when {
+            agentStatus == AgentStatus.waiting || waitingTask?.status == AgentStatus.waiting ->
+                "好呀，我已经整理好了。\n你确认一下，我再继续。"
+            agentStatus == AgentStatus.done -> "好，这次已经完成。"
+            else -> "我在听。你说完我再整理。"
+        }
+        CaptionAssistant(demo)
+    } else {
+        entries.takeLast(12).forEach { e ->
+            e.messagePresentation().forEach { msg ->
+                when (msg.kind) {
+                    ChatMessageKind.USER -> CaptionUser(msg.text)
+                    ChatMessageKind.ASSISTANT ->
+                        CaptionAssistant(msg.text, showAiGeneratedLabel = msg.showAiGeneratedLabel)
+                    ChatMessageKind.PENDING, ChatMessageKind.ERROR -> Unit
+                }
+            }
         }
     }
 }

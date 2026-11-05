@@ -482,7 +482,7 @@ private fun HomeTopBar(
 }
 
 @Composable
-private fun ChatEntryBlock(entry: ChatEntry) {
+internal fun ChatEntryBlock(entry: ChatEntry) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         for (msg in entry.messagePresentation()) {
             when (msg.kind) {
