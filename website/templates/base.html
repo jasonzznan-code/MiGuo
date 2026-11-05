@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="@@DESCRIPTION@@">
+  <meta name="theme-color" content="#f3f0e7">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <title>@@TITLE@@</title>
+  <link rel="icon" href="assets/migo.png" type="image/png">
+  <link rel="stylesheet" href="assets/site.css">
+  <link rel="alternate" type="application/json" href="release-manifest.json" title="米果版本清单">
+</head>
+<body>
+  <a class="skip" href="#main">跳到主要内容</a>
+  <header class="site-header">
+    <div class="wrap bar">
+      <a class="brand" href="index.html">
+        <img src="assets/migo.png" width="48" height="52" alt="">
+        <span>
+          <span class="brand-name">@@NAME_ZH@@</span>
+          <span class="brand-en">@@NAME_EN@@</span>
+        </span>
+      </a>
+      <nav aria-label="主导航">
+        @@NAV@@
+      </nav>
+    </div>
+  </header>
+  <main id="main" tabindex="-1">
+    <div class="wrap">
+      @@MAIN@@
+    </div>
+  </main>
+  @@FOOTER@@
+  <script src="assets/site.js"></script>
+</body>
+</html>

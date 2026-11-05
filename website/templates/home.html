@@ -1,0 +1,35 @@
+<section class="hero">
+  <div>
+    <h1>@@NAME_ZH@@</h1>
+    <p class="lede">@@NAME_ZH@@（@@NAME_EN@@）是由@@OPERATOR@@运营的 Android 个人助手。包名 @@APPLICATION_ID@@。这里给出产品说明、隐私政策、源码入口，以及唯一一份当前版本记录。</p>
+    <div class="actions">
+      <a class="button" href="download.html">查看 Android 版本与校验</a>
+      <a class="button secondary" href="product.html">阅读产品简介</a>
+    </div>
+  </div>
+  <section class="card" aria-labelledby="current-release">
+    <h2 id="current-release">当前版本记录</h2>
+    <dl class="meta">
+      <dt>版本</dt>
+      <dd>@@VERSION_NAME@@（versionCode @@VERSION_CODE@@）</dd>
+      <dt>更新日期</dt>
+      <dd><time datetime="@@UPDATED_ON@@">@@UPDATED_ON@@</time></dd>
+      <dt>渠道</dt>
+      <dd>商店构建（@@CHANNEL@@）</dd>
+    </dl>
+    <p id="sha-label">SHA-256</p>
+    <code class="sha" id="sha256" aria-labelledby="sha-label">@@SHA256@@</code>
+    <button type="button" class="copy" data-copy="@@SHA256@@" aria-controls="sha-status">复制 SHA-256</button>
+    <p id="sha-status" role="status" aria-live="polite"></p>
+    @@DOWNLOAD_BLOCK@@
+    <p>@@PUBLIC_SCOPE@@</p>
+    <p><a href="download.html">打开完整的下载与校验说明</a></p>
+  </section>
+</section>
+<h2>从这里继续</h2>
+<ul class="links">
+  <li><a href="product.html">产品简介</a></li>
+  <li><a href="privacy.html">隐私政策</a></li>
+  <li><a href="opensource.html">开源与源码</a></li>
+  <li><a href="contact.html">联系方式</a></li>
+</ul>
