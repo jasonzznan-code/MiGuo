@@ -15,3 +15,5 @@ android/*.keystore
 Thumbs.db
 .idea/
 *.iml
+**/__pycache__/
+*.pyc
