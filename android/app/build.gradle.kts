@@ -88,8 +88,8 @@ android {
         applicationId = "com.miguo.voice"
         minSdk = 26
         targetSdk = 35
-        // 2026-11-02：最终候选；联系邮箱写入；versionName 1.0.0 / vc102 storeRelease
-        versionCode = 102
+        // 2026-11-05：上线候选；含「内容由 AI 生成」；联系邮箱不变；versionName 1.0.0 / vc104 storeRelease
+        versionCode = 104
         versionName = "1.0.0"
         // Safe default: empty. Flavors override (store stays empty; internal may inject for local dev).
         buildConfigField("String", "DEFAULT_API_KEY", javaStringLiteral(""))
