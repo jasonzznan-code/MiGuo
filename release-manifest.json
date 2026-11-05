@@ -34,11 +34,11 @@
       "sha256Basis": "文件 miguo-1.0.0-store-vc104-storeRelease.apk 的 SHA-256。下载地址可访问时，检查会重新计算并核对。",
       "publicScope": "这个 SHA-256 是 2026-11-05 的商店构建，versionName 1.0.0，versionCode 104。安装包包含助手回复旁的「内容由 AI 生成」标注，登录页上的合规长串已隐藏。",
       "artifact": {
-        "httpsUrl": null,
-        "fileName": null,
-        "status": "not_published",
+        "httpsUrl": "https://github.com/jasonzznan-code/MiGuo/releases/download/v1.0.0-store-vc104/miguo-1.0.0-store-vc104-storeRelease.apk",
+        "fileName": "miguo-1.0.0-store-vc104-storeRelease.apk",
+        "status": "published",
         "checkedOn": "2026-11-05",
-        "evidence": "2026-11-05 查看 GitHub Releases：还没有可核对的 vc104 附件，因此没有填写下载地址。"
+        "evidence": "GitHub Release v1.0.0-store-vc104 的附件可通过 HTTPS 下载。检查会下载该文件并核对 SHA-256。"
       },
       "storeStatus": "not_recorded"
     },
@@ -65,7 +65,7 @@
         "evidence": "该记录已不再是当前安装包，没有下载地址。"
       },
       "storeStatus": "not_recorded",
-      "supersededBecause": "已被含 AI 标识的 vc104 最终包取代"
+      "supersededBecause": "被含「内容由 AI 生成」的 vc104 最终包取代"
     }
   ]
 }
