@@ -18,10 +18,9 @@
     <dd><time datetime="@@UPDATED_ON@@">@@UPDATED_ON@@</time></dd>
     <dt>日期依据</dt>
     <dd>@@UPDATED_ON_BASIS@@</dd>
-    <dt>Git 标签</dt>
-    <dd><a href="@@TAG_URL@@" target="_blank" rel="noopener noreferrer">@@SOURCE_TAG@@<span class="vh">（在新窗口打开）</span></a></dd>
-    <dt>Git 提交</dt>
-    <dd>@@GIT_COMMIT@@</dd>
+    @@GIT_ROWS@@
+    <dt>MD5</dt>
+    <dd>@@MD5@@</dd>
     <dt>最低系统</dt>
     <dd>API @@MIN_SDK@@ 及以上（目标 API @@TARGET_SDK@@）</dd>
     <dt>下载地址核查日</dt>
@@ -37,6 +36,7 @@
   <p id="sha-status" role="status" aria-live="polite"></p>
   <h2>这份记录的范围</h2>
   <p>@@PUBLIC_SCOPE@@</p>
+  <p>@@SUPERSEDED_NOTE@@</p>
   <p>校验值依据：@@SHA256_BASIS@@</p>
   <p><a href="release-manifest.json">机器可读版本清单</a></p>
 </article>

@@ -16,30 +16,56 @@
     "minSdk": 26,
     "targetSdk": 35
   },
-  "currentReleaseId": "android-store-1.0.0-vc102",
+  "currentReleaseId": "android-store-1.0.0-vc104",
   "releases": [
     {
-      "id": "android-store-1.0.0-vc102",
+      "id": "android-store-1.0.0-vc104",
       "role": "current",
+      "platform": "android",
+      "channel": "storeRelease",
+      "versionName": "1.0.0",
+      "versionCode": 104,
+      "gitTag": null,
+      "gitCommit": null,
+      "md5": "ea369e86ae09a80c5e962cb131d6aece",
+      "updatedOn": "2026-11-05",
+      "updatedOnBasis": "这份 vc104 安装包的记录日期为 2026-11-05（Asia/Shanghai）。它不是 Git 标签 v1.0.0 的日期。",
+      "sha256": "55e8846cb716f4e86fdde47cc2efcdb7c8b21ecaaae0187d19e75a54df113865",
+      "sha256Basis": "文件 miguo-1.0.0-store-vc104-storeRelease.apk 的 SHA-256。下载地址可访问时，检查会重新计算并核对。",
+      "publicScope": "这个 SHA-256 是 2026-11-05 的商店构建，versionName 1.0.0，versionCode 104。安装包包含助手回复旁的「内容由 AI 生成」标注，登录页上的合规长串已隐藏。",
+      "artifact": {
+        "httpsUrl": null,
+        "fileName": null,
+        "status": "not_published",
+        "checkedOn": "2026-11-05",
+        "evidence": "2026-11-05 查看 GitHub Releases：还没有可核对的 vc104 附件，因此没有填写下载地址。"
+      },
+      "storeStatus": "not_recorded"
+    },
+    {
+      "id": "android-store-1.0.0-vc102",
+      "role": "superseded",
       "platform": "android",
       "channel": "storeRelease",
       "versionName": "1.0.0",
       "versionCode": 102,
       "gitTag": "v1.0.0",
       "gitCommit": "5d9f086ba52ec08dc004fbe6ee1db2a40c991295",
+      "md5": null,
       "updatedOn": "2026-11-02",
       "updatedOnBasis": "Git 附注标签 v1.0.0 的标记时间 2026-11-02 15:36:26 +0800；对应提交 5d9f086 的提交时间 2026-11-02 15:34:52 +0800。",
       "sha256": "434d88fe0c187f5f7f0582cac28a3b541e07d204da8a93576a35b7bb45d9702c",
-      "sha256Basis": "沿用已有 vc102 storeRelease 的 SHA-256 记录。本仓库没有安装包文件，页面生成过程不会另算一份校验值。",
-      "publicScope": "这个 SHA-256 对应 Git 标签 v1.0.0（提交 5d9f086ba52ec08dc004fbe6ee1db2a40c991295，2026-11-02）的 storeRelease 记录。标签之后的源码改动不在这个安装包内，包括助手回复旁标注「内容由 AI 生成」的提交。那些改动还没有单独的版本号、SHA-256 和 HTTPS 安装包；在写入新的当前记录之前，不能把它们算进 1.0.0 / 102。",
+      "sha256Basis": "已被取代的 vc102 storeRelease 校验值。它不作为当前下载。",
+      "publicScope": "这个 SHA-256 对应 Git 标签 v1.0.0（提交 5d9f086ba52ec08dc004fbe6ee1db2a40c991295，2026-11-02）。它不包含助手回复旁的「内容由 AI 生成」。",
       "artifact": {
         "httpsUrl": null,
         "fileName": null,
         "status": "not_published",
         "checkedOn": "2026-11-05",
-        "evidence": "2026-11-05 查看 GitHub Releases：仓库 jasonzznan-code/MiGuo 的 Release 数量为 0。标签 v1.0.0 在，但没有可下载的附件。因此没有填写下载地址。"
+        "evidence": "该记录已不再是当前安装包，没有下载地址。"
       },
-      "storeStatus": "not_recorded"
+      "storeStatus": "not_recorded",
+      "supersededBecause": "已被含 AI 标识的 vc104 最终包取代"
     }
   ]
 }

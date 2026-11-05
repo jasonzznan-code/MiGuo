@@ -48,6 +48,7 @@ RELEASE_KEYS = {
     "versionCode",
     "gitTag",
     "gitCommit",
+    "md5",
     "updatedOn",
     "updatedOnBasis",
     "sha256",
@@ -198,10 +199,17 @@ def validate_manifest(data: dict) -> dict:
         if code in seen_codes:
             raise ManifestError(f"duplicate versionCode {code}")
         seen_codes.add(code)
-        if not TAG_RE.fullmatch(str(release["gitTag"])):
-            raise ManifestError(f"gitTag is not a tag name: {release['gitTag']}")
-        if not COMMIT_RE.fullmatch(str(release["gitCommit"])):
+        tag = release["gitTag"]
+        commit = release["gitCommit"]
+        if (tag is None) != (commit is None):
+            raise ManifestError(f"{rel_id} must set gitTag and gitCommit together, or leave both empty")
+        if tag is not None and not TAG_RE.fullmatch(str(tag)):
+            raise ManifestError(f"gitTag is not a tag name: {tag}")
+        if commit is not None and not COMMIT_RE.fullmatch(str(commit)):
             raise ManifestError("gitCommit must be a 40-character commit id")
+        md5 = release["md5"]
+        if md5 is not None and (not isinstance(md5, str) or not re.fullmatch(r"[0-9a-f]{32}", md5)):
+            raise ManifestError("md5 must be 32 lowercase hex characters or null")
         _date(release["updatedOn"], "updatedOn")
         _text(release["updatedOnBasis"], "updatedOnBasis", 8)
         sha = release["sha256"]
@@ -321,6 +329,43 @@ def _values(data: dict, release: dict, download_verified: bool) -> dict[str, str
     source = product["sourceUrl"].rstrip("/")
     tag = release["gitTag"]
     artifact = release["artifact"]
+    if tag:
+        tag_url = f"{source}/tree/{tag}"
+        license_url = f"{source}/blob/{tag}/LICENSE"
+        git_rows = (
+            "<dt>Git 标签</dt>"
+            f'<dd><a href="{html.escape(tag_url, quote=True)}" target="_blank" rel="noopener noreferrer">{html.escape(tag)}<span class="vh">（在新窗口打开）</span></a></dd>'
+            "<dt>Git 提交</dt>"
+            f"<dd>{html.escape(release['gitCommit'])}</dd>"
+        )
+        source_note = (
+            f'与当前版本记录对应的标签是 <a href="{html.escape(tag_url, quote=True)}" target="_blank" rel="noopener noreferrer">{html.escape(tag)}<span class="vh">（在新窗口打开）</span></a>，'
+            f"提交 {html.escape(release['gitCommit'])}。"
+        )
+    else:
+        tag_url = ""
+        license_url = f"{source}/blob/main/LICENSE"
+        git_rows = (
+            "<dt>Git 标签</dt>"
+            "<dd>这份安装包没有单独的 Git 标签。</dd>"
+            "<dt>Git 提交</dt>"
+            "<dd>以 SHA-256 识别，不把某一个源码提交写成这个文件的构建提交。</dd>"
+        )
+        source_note = "当前安装包以 SHA-256 和 versionCode 识别，没有单独的 Git 标签。源码仓库仍是上面的地址。"
+    previous = []
+    for other in data["releases"]:
+        if other["id"] == release["id"]:
+            continue
+        previous.append(
+            "versionCode "
+            + str(other["versionCode"])
+            + "（SHA-256 "
+            + other["sha256"]
+            + "，"
+            + other["updatedOn"]
+            + "）不是当前安装包。原因："
+            + other.get("supersededBecause", "")
+        )
     rows = "\n".join(
         "<tr>"
         + "".join(f"<td>{html.escape(cell)}</td>" for cell in row)
@@ -335,9 +380,13 @@ def _values(data: dict, release: dict, download_verified: bool) -> dict[str, str
         "OPERATOR": product["operator"],
         "EMAIL": product["contactEmail"],
         "SOURCE_URL": source,
-        "SOURCE_TAG": tag,
-        "TAG_URL": f"{source}/tree/{tag}",
-        "LICENSE_FILE_URL": f"{source}/blob/{tag}/LICENSE",
+        "SOURCE_TAG": tag or "",
+        "TAG_URL": tag_url,
+        "LICENSE_FILE_URL": license_url,
+        "GIT_ROWS": git_rows,
+        "SOURCE_NOTE": source_note,
+        "SUPERSEDED_NOTE": " ".join(previous),
+        "MD5": release["md5"] or "",
         "LICENSE": product["licenseSpdx"],
         "GPL_URL": GPL_URL,
         "APACHE_URL": APACHE_URL,
@@ -352,7 +401,7 @@ def _values(data: dict, release: dict, download_verified: bool) -> dict[str, str
         "SHA256": release["sha256"],
         "SHA256_BASIS": release["sha256Basis"],
         "CHANNEL": release["channel"],
-        "GIT_COMMIT": release["gitCommit"],
+        "GIT_COMMIT": release["gitCommit"] or "",
         "MIN_SDK": str(product["minSdk"]),
         "TARGET_SDK": str(product["targetSdk"]),
         "PUBLIC_SCOPE": release["publicScope"],
@@ -361,8 +410,10 @@ def _values(data: dict, release: dict, download_verified: bool) -> dict[str, str
         "LICENSE_ROWS": rows,
         "DOWNLOAD_BLOCK": _download_block(release, download_verified),
     }
-    for key in ("TAG_URL", "LICENSE_FILE_URL", "GPL_URL", "APACHE_URL"):
+    for key in ("LICENSE_FILE_URL", "GPL_URL", "APACHE_URL"):
         assert_public_https(base_values[key])
+    if tag_url:
+        assert_public_https(tag_url)
     base_values["PRIVACY_BODY"] = fill(
         privacy_template,
         base_values,
@@ -417,7 +468,7 @@ def render(dest: Path, data: dict | None = None, *, download_verified: bool = Fa
     (dest / "robots.txt").write_text("User-agent: *\nAllow: /\n", encoding="utf-8")
     raw = {"NAV", "MAIN", "FOOTER"}
     for filename, template_name, title, description, current in pages:
-        main = fill((TEMPLATE_DIR / template_name).read_text(encoding="utf-8"), values, raw={"DOWNLOAD_BLOCK", "PRIVACY_BODY", "LICENSE_ROWS"})
+        main = fill((TEMPLATE_DIR / template_name).read_text(encoding="utf-8"), values, raw={"DOWNLOAD_BLOCK", "PRIVACY_BODY", "LICENSE_ROWS", "GIT_ROWS", "SOURCE_NOTE"})
         page_values = {
             **values,
             "TITLE": title,

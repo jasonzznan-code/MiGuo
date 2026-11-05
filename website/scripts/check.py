@@ -38,7 +38,25 @@ PINNED_PRODUCT = {
 }
 
 PINNED_RELEASE = {
+    "id": "android-store-1.0.0-vc104",
+    "versionName": "1.0.0",
+    "versionCode": 104,
+    "sha256": "55e8846cb716f4e86fdde47cc2efcdb7c8b21ecaaae0187d19e75a54df113865",
+    "md5": "ea369e86ae09a80c5e962cb131d6aece",
+    "updatedOn": "2026-11-05",
+    "channel": "storeRelease",
+    "fileName": "miguo-1.0.0-store-vc104-storeRelease.apk",
+    "publicScopeMustContain": [
+        "内容由 AI 生成",
+        "2026-11-05",
+        "登录页",
+        "104",
+    ],
+}
+
+PINNED_VC102 = {
     "id": "android-store-1.0.0-vc102",
+    "role": "superseded",
     "versionName": "1.0.0",
     "versionCode": 102,
     "sha256": "434d88fe0c187f5f7f0582cac28a3b541e07d204da8a93576a35b7bb45d9702c",
@@ -46,11 +64,7 @@ PINNED_RELEASE = {
     "gitTag": "v1.0.0",
     "gitCommit": "5d9f086ba52ec08dc004fbe6ee1db2a40c991295",
     "channel": "storeRelease",
-    "publicScopeMustContain": [
-        "不在这个安装包内",
-        "内容由 AI 生成",
-        "5d9f086ba52ec08dc004fbe6ee1db2a40c991295",
-    ],
+    "supersededBecause": "已被含 AI 标识的 vc104 最终包取代",
 }
 
 FORBIDDEN = (
@@ -465,10 +479,11 @@ def check_rendered(dest: Path, data: dict, release: dict, failures: list[str]) -
         for name in ("index.html", "download.html", "product.html"):
             if phrase not in (dest / name).read_text(encoding="utf-8"):
                 failures.append(f"{name} dropped the scope sentence ({phrase})")
-    if "内容由 AI 生成" in (dest / "download.html").read_text(encoding="utf-8"):
-        download = (dest / "download.html").read_text(encoding="utf-8")
-        if "不在这个安装包内" not in download.split("内容由 AI 生成", 1)[0][-80:]:
-            failures.append("AI label mention is not tied to the exclusion sentence")
+    download = (dest / "download.html").read_text(encoding="utf-8")
+    if "不包含助手回复旁的「内容由 AI 生成」" in download:
+        failures.append("download page still describes the current package as missing the AI label")
+    if PINNED_VC102["sha256"] not in download or PINNED_VC102["supersededBecause"] not in download:
+        failures.append("download page lost the superseded vc102 record")
     return urls
 
 
@@ -530,7 +545,7 @@ def check_privacy_mirror(data: dict, failures: list[str]) -> None:
         failures.append("privacy copy still points at an unspecified page URL")
 
 
-def check_source_identity(release: dict, failures: list[str]) -> None:
+def check_source_identity(data: dict, release: dict, failures: list[str]) -> None:
     sha = release["sha256"]
     text_suffixes = {".html", ".css", ".js", ".json", ".md", ".txt", ".yml"}
     for path in WEBSITE.rglob("*"):
@@ -542,15 +557,20 @@ def check_source_identity(release: dict, failures: list[str]) -> None:
         if path.name != "release-manifest.json" and sha in text:
             failures.append(f"{path.relative_to(WEBSITE)} repeats the SHA-256 outside the manifest")
         scan_text(str(path.relative_to(WEBSITE)), text, failures)
-    try:
-        commit, created = git_tag_commit_and_date(release["gitTag"])
-    except (subprocess.CalledProcessError, build.ManifestError) as exc:
-        failures.append(f"git tag check failed: {exc}")
-        return
-    if commit != release["gitCommit"]:
-        failures.append(f"tag {release['gitTag']} points at {commit}")
-    if created != release["updatedOn"]:
-        failures.append(f"tag date {created} does not match updatedOn {release['updatedOn']}")
+    for item in data["releases"]:
+        tag = item.get("gitTag")
+        commit = item.get("gitCommit")
+        if tag is None and commit is None:
+            continue
+        try:
+            found, created = git_tag_commit_and_date(tag)
+        except (subprocess.CalledProcessError, build.ManifestError) as exc:
+            failures.append(f"git tag check failed for {item['id']}: {exc}")
+            continue
+        if found != commit:
+            failures.append(f"tag {tag} points at {found}")
+        if created != item["updatedOn"]:
+            failures.append(f"tag date {created} does not match updatedOn {item['updatedOn']} on {item['id']}")
 
 
 def serve_and_request(dest: Path, failures: list[str]) -> None:
@@ -584,14 +604,26 @@ def pin_release(data: dict, release: dict, failures: list[str]) -> None:
         if product.get(key) != expected:
             failures.append(f"product.{key} changed from the pinned public value")
     if release["id"] != PINNED_RELEASE["id"]:
-        failures.append("current release id changed; review the pin before replacing vc102")
+        failures.append("current release id changed; review PINNED_RELEASE before replacing vc104")
         return
-    for key in ("versionName", "versionCode", "sha256", "updatedOn", "gitTag", "gitCommit", "channel"):
+    for key in ("versionName", "versionCode", "sha256", "md5", "updatedOn", "channel"):
         if release[key] != PINNED_RELEASE[key]:
-            failures.append(f"pinned vc102 field {key} changed")
+            failures.append(f"pinned vc104 field {key} changed")
     for phrase in PINNED_RELEASE["publicScopeMustContain"]:
         if phrase not in release["publicScope"]:
-            failures.append(f"vc102 scope no longer contains {phrase}")
+            failures.append(f"vc104 scope no longer contains {phrase}")
+    if release["artifact"]["status"] == "published" and release["artifact"]["fileName"] != PINNED_RELEASE["fileName"]:
+        failures.append("published file name is not the vc104 package name")
+    matched = [item for item in data["releases"] if item["id"] == PINNED_VC102["id"]]
+    if len(matched) != 1:
+        failures.append("vc102 record is missing")
+        return
+    old = matched[0]
+    for key, expected in PINNED_VC102.items():
+        if old.get(key) != expected:
+            failures.append(f"pinned vc102 field {key} changed")
+    if old["artifact"]["status"] != "not_published" or old["artifact"]["httpsUrl"] is not None:
+        failures.append("superseded vc102 must not keep a download URL")
 
 
 def main() -> int:
@@ -604,7 +636,7 @@ def main() -> int:
         print(f"manifest: {exc}")
         return 1
     pin_release(data, release, failures)
-    check_source_identity(release, failures)
+    check_source_identity(data, release, failures)
     verified = False
     artifact = release["artifact"]
     if artifact["status"] == "published":
