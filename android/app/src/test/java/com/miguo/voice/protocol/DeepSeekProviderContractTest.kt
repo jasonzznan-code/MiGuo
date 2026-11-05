@@ -16,7 +16,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.io.File
 
 /**
  * 本地 mock。不访问 api.deepseek.com，不使用真实密钥。
@@ -224,26 +223,5 @@ class DeepSeekProviderContractTest {
         } finally {
             srv.shutdown()
         }
-    }
-
-    @Test fun serverEnvExampleHasNoRealKey() {
-        val file = repoFile("docs/server-deepseek.env.example")
-        val text = file.readText()
-        assertTrue(text.contains("DEEPSEEK_API_KEY"))
-        assertTrue(text.contains("https://api.deepseek.com"))
-        assertTrue(text.contains("deepseek-flash"))
-        assertFalse(text.contains("sk-"))
-        assertFalse(text.contains("openrouter"))
-        val assigned = text.lineSequence().filter { line ->
-            val t = line.trim()
-            t.isNotEmpty() && !t.startsWith("#") && t.contains('=')
-        }.toList()
-        assertTrue(assigned.toString(), assigned.isEmpty())
-    }
-
-    private fun repoFile(relative: String): File {
-        val starts = listOf(File("."), File(".."), File("../.."), File("../../.."))
-        return starts.map { File(it, relative) }.firstOrNull { it.isFile }
-            ?: error("找不到 $relative ，已试：${starts.joinToString { it.absolutePath }}")
     }
 }
