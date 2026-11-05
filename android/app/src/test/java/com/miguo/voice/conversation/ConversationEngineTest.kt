@@ -225,6 +225,9 @@ class ConversationEngineTest {
         // 历史进入聊天气泡
         val h = chat.entries.value.single()
         assertTrue(h.history); assertEquals("我叫杰森", h.user); assertEquals("你好杰森", h.assistant)
+        assertEquals(1, h.messagePresentation().count { it.showAiGeneratedLabel })
+        assertEquals("你好杰森", h.messagePresentation().first { it.showAiGeneratedLabel }.text)
+        assertFalse(h.assistant.contains(AiGeneratedLabel.TEXT))
 
         val gatesAtReady = audio.gate.size
         tr.speakTurn(1); runCurrent()
@@ -295,6 +298,9 @@ class ConversationEngineTest {
         runCurrent()
         val last = chat.entries.value.last()
         assertEquals("换个话题", last.user); assertEquals("text", last.userSource); assertEquals("好的", last.assistant)
+        assertEquals(1, last.messagePresentation().count { it.showAiGeneratedLabel })
+        assertEquals("好的", last.messagePresentation().first { it.kind == ChatMessageKind.ASSISTANT }.text)
+        assertFalse(last.assistant.contains(AiGeneratedLabel.TEXT))
     }
 
     @Test fun sendLocationInSessionAndAckIgnored() = runTest {
