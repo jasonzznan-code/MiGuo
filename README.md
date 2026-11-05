@@ -1,14 +1,14 @@
-# 米果（Miguo）Android · 开源精简树（1.0.0 / VC102）
+# 米果（Miguo）Android · 开源精简树（1.0.0 / VC104）
 
 > 时区：Asia/Shanghai · 导出日：2026-11-02  
 > 公开源码：https://github.com/jasonzznan-code/MiGuo  
-> Tag：`v1.0.0` · versionName **1.0.0** · versionCode **102**  
+> Tag：`v1.0.0` · versionName **1.0.0** · versionCode **104**  
 > 许可证：**GPL-3.0-or-later** · 版权：**米果 / Miguo contributors** · 2026  
 > 展示主体：**米果智能（个人开发者）**
 
 ## 项目简介
 
-米果是面向个人助手场景的 Android 客户端（包名 `com.miguo.voice`）。本仓库为**商店策略 A 公开源码**：与商店 APK **同源**（本树对齐 **1.0.0 / versionCode 102** storeRelease），不以「源码藏核心、APK 带核心」方式分叉。
+米果是面向个人助手场景的 Android 客户端（包名 `com.miguo.voice`）。本仓库为**商店策略 A 公开源码**：与商店 APK **同源**（本树对齐 **1.0.0 / versionCode 104** storeRelease），不以「源码藏核心、APK 带核心」方式分叉。
 
 本树仅含 **Android 客户端**可编译源码与随包资源；**不含**服务端、其它端工程、密钥、`.env`、正式签名 keystore。
 
