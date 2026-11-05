@@ -103,6 +103,7 @@ android {
         // Open-source slim defaults; flavors override. store=false hides C1/C2/C6 paths.
         buildConfigField("boolean", "FEATURE_VOICE", "false")
         buildConfigField("boolean", "FEATURE_PLAN", "false")
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     flavorDimensions += "channel"
@@ -211,4 +212,9 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+
+    androidTestImplementation(composeBom)
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }

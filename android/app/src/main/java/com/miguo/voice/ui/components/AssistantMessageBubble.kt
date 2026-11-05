@@ -58,3 +58,20 @@ fun AssistantMessageBubble(
         }
     }
 }
+
+/**
+ * 计划/会话时间线里的一条正文。标识规则与主会话相同：只有助手正文才标。
+ */
+@Composable
+fun TimelineMessageText(
+    role: String,
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier) {
+        Text(text, color = MigoTokens.Ink, fontSize = 14.sp)
+        if (AiGeneratedLabel.isAssistantReply(role, text)) {
+            AiGeneratedCaption(Modifier.padding(top = 4.dp))
+        }
+    }
+}
