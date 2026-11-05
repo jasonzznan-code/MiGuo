@@ -57,8 +57,11 @@ import androidx.compose.ui.layout.ContentScale
 import com.miguo.voice.support.PersonaPrefs
 import com.miguo.voice.adapters.local.AgentStatus
 import com.miguo.voice.conversation.ChatEntry
+import com.miguo.voice.conversation.ChatMessageKind
 import com.miguo.voice.conversation.TextChatState
+import com.miguo.voice.conversation.messagePresentation
 import com.miguo.voice.ui.AppModel
+import com.miguo.voice.ui.components.AssistantMessageBubble
 import com.miguo.voice.ui.components.SessionEdgeFailed
 import com.miguo.voice.ui.components.SessionEdgeLoading
 import com.miguo.voice.ui.components.SessionTaskCard
@@ -481,16 +484,14 @@ private fun HomeTopBar(
 @Composable
 private fun ChatEntryBlock(entry: ChatEntry) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        if (entry.user.isNotBlank()) {
-            UserBubble(entry.user, meta = "你 · 刚刚")
-        }
-        if (entry.pending && entry.assistant.isBlank()) {
-            AssistantBubble("思考中…")
-        } else if (entry.assistant.isNotBlank()) {
-            AssistantBubble(entry.assistant)
-        }
-        entry.failed?.let {
-            Text(it, color = MigoTokens.Error, fontSize = 12.sp)
+        for (msg in entry.messagePresentation()) {
+            when (msg.kind) {
+                ChatMessageKind.USER -> UserBubble(msg.text, meta = "你 · 刚刚")
+                ChatMessageKind.ASSISTANT, ChatMessageKind.PENDING ->
+                    AssistantMessageBubble(msg.text, showAiGeneratedLabel = msg.showAiGeneratedLabel)
+                ChatMessageKind.ERROR ->
+                    Text(msg.text, color = MigoTokens.Error, fontSize = 12.sp)
+            }
         }
     }
 }
@@ -509,22 +510,6 @@ private fun UserBubble(text: String, meta: String? = null) {
             modifier = Modifier
                 .widthIn(max = 280.dp)
                 .background(MigoTokens.UserBubble, RoundedCornerShape(16.dp))
-                .padding(horizontal = 14.dp, vertical = 10.dp),
-        )
-    }
-}
-
-@Composable
-private fun AssistantBubble(text: String) {
-    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start) {
-        Text(
-            text,
-            color = MigoTokens.Ink,
-            fontSize = 15.sp,
-            lineHeight = 22.sp,
-            modifier = Modifier
-                .widthIn(max = 280.dp)
-                .background(MigoTokens.AssistantBubble, RoundedCornerShape(16.dp))
                 .padding(horizontal = 14.dp, vertical = 10.dp),
         )
     }

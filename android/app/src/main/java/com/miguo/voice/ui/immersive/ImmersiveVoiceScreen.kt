@@ -76,8 +76,11 @@ import com.miguo.voice.adapters.local.Task
 import com.miguo.voice.ui.components.uiChipLabel
 import com.miguo.voice.ui.home.MigoAuxSheet
 import com.miguo.voice.ui.home.MigoAuxSheetHost
+import com.miguo.voice.conversation.ChatMessageKind
 import com.miguo.voice.conversation.ConversationState
+import com.miguo.voice.conversation.messagePresentation
 import com.miguo.voice.ui.AppModel
+import com.miguo.voice.ui.components.AiGeneratedCaption
 import com.miguo.voice.ui.theme.MigoIcons
 import com.miguo.voice.ui.theme.MigoTokens
 import kotlin.math.PI
@@ -597,8 +600,14 @@ private fun ImmersiveCaptionsPanel(
                     CaptionAssistant(demo)
                 } else {
                     entries.takeLast(12).forEach { e ->
-                        if (e.user.isNotBlank()) CaptionUser(e.user)
-                        if (e.assistant.isNotBlank()) CaptionAssistant(e.assistant)
+                        e.messagePresentation().forEach { msg ->
+                            when (msg.kind) {
+                                ChatMessageKind.USER -> CaptionUser(msg.text)
+                                ChatMessageKind.ASSISTANT ->
+                                    CaptionAssistant(msg.text, showAiGeneratedLabel = msg.showAiGeneratedLabel)
+                                ChatMessageKind.PENDING, ChatMessageKind.ERROR -> Unit
+                            }
+                        }
                     }
                 }
                 waitingTask?.let { task ->
@@ -650,7 +659,7 @@ private fun ImmersiveCaptionsPanel(
 }
 
 @Composable
-private fun CaptionAssistant(text: String) {
+private fun CaptionAssistant(text: String, showAiGeneratedLabel: Boolean = false) {
     Column(Modifier.fillMaxWidth().padding(bottom = 25.dp)) {
         Text("米果", color = Color(0xFF818D77), fontSize = 10.sp, modifier = Modifier.padding(bottom = 5.dp))
         Text(
@@ -660,6 +669,12 @@ private fun CaptionAssistant(text: String) {
             lineHeight = (19 * 1.9f).sp,
             letterSpacing = 0.2.sp,
         )
+        if (showAiGeneratedLabel) {
+            AiGeneratedCaption(
+                Modifier.padding(top = 4.dp),
+                color = Color(0xFF818D77),
+            )
+        }
     }
 }
 

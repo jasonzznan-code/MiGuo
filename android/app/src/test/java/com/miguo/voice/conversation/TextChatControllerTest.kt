@@ -89,6 +89,13 @@ class TextChatControllerTest {
         runCurrent()
         val e = chat.entries.value.single()
         assertEquals("在吗", e.user); assertEquals("你好呀", e.assistant); assertTrue(e.pending)  // 流式中
+        val streaming = e.messagePresentation()
+        assertEquals(listOf(ChatMessageKind.USER, ChatMessageKind.ASSISTANT), streaming.map { it.kind })
+        assertFalse(streaming.first().showAiGeneratedLabel)
+        assertTrue(streaming.last().showAiGeneratedLabel)
+        assertEquals("你好呀", streaming.last().text)
+        assertFalse(e.assistant.contains(AiGeneratedLabel.TEXT))
+        assertFalse(be.reqs.single().first.encode().contains(AiGeneratedLabel.TEXT))
         assertEquals("conv-1", conv)
         val (req, id) = be.reqs.single()
         assertNull(req.conversationId); assertTrue(req.resume)
@@ -116,6 +123,11 @@ class TextChatControllerTest {
         assertEquals(listOf("acc1", "acc2"), be.reqs.map { it.second.bearer })
         assertEquals("ok", chat.entries.value.single().assistant)
         assertEquals(TextChatState.Idle, c.state.value)
+        val plan = chat.entries.value.single().messagePresentation()
+        assertEquals(1, plan.count { it.showAiGeneratedLabel })
+        assertEquals("ok", plan.first { it.showAiGeneratedLabel }.text)
+        assertTrue(be.reqs.all { !it.first.encode().contains(AiGeneratedLabel.TEXT) })
+        assertFalse(chat.entries.value.single().assistant.contains(AiGeneratedLabel.TEXT))
     }
 
     @Test fun notSupportedFailsWithHint() = runTest {
@@ -127,6 +139,21 @@ class TextChatControllerTest {
         assertEquals(f.message, chat.entries.value.single().failed)
         assertFalse(chat.entries.value.single().pending)
         c.dismissError(); assertEquals(TextChatState.Idle, c.state.value)
+    }
+
+    @Test fun notSupportedErrorIsNotAnAiReply() = runTest {
+        val be = FakeChat().apply { results += ApiResult.NotSupported }
+        val chat = ChatLog(); val c = ctl(be, chat)
+        c.send("hi"); runCurrent()
+        val entry = chat.entries.value.single()
+        val failed = c.state.value as TextChatState.Failed
+        assertEquals(failed.message, entry.failed)
+        assertTrue(entry.assistant.isEmpty())
+        val plan = entry.messagePresentation()
+        assertTrue(plan.any { it.kind == ChatMessageKind.ERROR && it.text == failed.message && !it.showAiGeneratedLabel })
+        assertTrue(plan.none { it.showAiGeneratedLabel })
+        assertFalse(entry.failed!!.contains(AiGeneratedLabel.TEXT))
+        assertTrue(be.reqs.all { !it.first.encode().contains(AiGeneratedLabel.TEXT) })
     }
 
     @Test fun speakPlaysAudio() = runTest {

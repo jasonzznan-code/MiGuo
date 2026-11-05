@@ -33,6 +33,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miguo.voice.adapters.local.AgentStatus
+import com.miguo.voice.conversation.AiGeneratedLabel
+import com.miguo.voice.ui.components.AiGeneratedCaption
 import com.miguo.voice.adapters.local.SessionDetail
 import com.miguo.voice.adapters.local.SessionSummary
 import com.miguo.voice.adapters.local.Task
@@ -242,6 +244,9 @@ private fun SessionPane(
             ) {
                 Text("${m.role} · ${m.createdAt}", color = Muted, fontSize = 11.sp)
                 Text(m.text, color = Ink, fontSize = 14.sp)
+                if (AiGeneratedLabel.isAssistantReply(m.role, m.text)) {
+                    AiGeneratedCaption(Modifier.padding(top = 4.dp))
+                }
             }
         }
         Spacer(Modifier.height(8.dp))
