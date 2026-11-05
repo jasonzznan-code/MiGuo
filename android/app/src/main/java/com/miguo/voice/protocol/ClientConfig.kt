@@ -29,6 +29,11 @@ data class ClientConfig(
     val updateRequiredFlag: Boolean = false,
     /** 服务端给了 errors.<code>.android 的错误码（这些即使是手机端特有错误也完整采用服务端文案） */
     val platformErrors: Set<String> = emptySet(),
+    /**
+     * 服务端对模型提供方的不含密钥通告。缺省关闭。
+     * 不改变 `/api/v1/chat/text`、登录或中继的请求地址；DeepSeek Key 不会出现在这里。
+     */
+    val llm: LlmProviderNotice = LlmProviderNotice.DISABLED,
     /** 来源："builtin" | "cache" | "server"，诊断用 */
     val source: String = "builtin",
     /** v2 服务端能力（旧服务器没有 features → 全部 null = 未知，客户端按 404 自动降级） */
@@ -148,6 +153,9 @@ data class ClientConfig(
                 ?: o.str("notice")
             c = c.copy(notice = n?.takeIf { it.isNotBlank() })
         }
+        // llm 只接受不含密钥的通告。没有这个对象时保持默认关闭，聊天路径不变。
+        // base_url / api_key 即使出现也不读取：地址和密钥只属于服务端环境变量。
+        o.obj("llm")?.let { c = c.copy(llm = LlmProviderNotice.fromJson(it)) }
         return c.copy(source = source)
     }
 

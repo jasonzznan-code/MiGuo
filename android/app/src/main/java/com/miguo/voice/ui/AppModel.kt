@@ -17,6 +17,7 @@ import com.miguo.voice.conversation.AppSettings
 import com.miguo.voice.conversation.ConversationEngine
 import com.miguo.voice.conversation.makeParams
 import com.miguo.voice.protocol.ClientConfig
+import com.miguo.voice.protocol.DeepSeekProviderContract
 import com.miguo.voice.protocol.ReadableError
 import com.miguo.voice.protocol.ServerEndpoint
 import com.miguo.voice.support.SecureStore
@@ -570,8 +571,11 @@ class AppModel(app: Application) : AndroidViewModel(app) {
 
     private fun loadCachedConfig(): ClientConfig {
         val raw = store.cachedConfigJson ?: return ClientConfig()
+        // 旧缓存若被误写入供应商密钥，读出来时丢掉并覆盖。没有密钥时 safe == raw。
+        val safe = DeepSeekProviderContract.redactConfigSecrets(raw)
+        if (safe != raw) store.cachedConfigJson = safe
         return try {
-            ClientConfig().mergedWith(ClientConfig.parseJson(raw), source = "cache")
+            ClientConfig().mergedWith(ClientConfig.parseJson(safe), source = "cache")
         } catch (e: Exception) {
             ClientConfig()
         }

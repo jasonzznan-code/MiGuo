@@ -3,6 +3,7 @@ package com.miguo.voice.transport
 import android.util.Log
 import com.miguo.voice.protocol.ApiResult
 import com.miguo.voice.protocol.AuthJson
+import com.miguo.voice.protocol.DeepSeekProviderContract
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -51,7 +52,7 @@ object HttpJson {
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            Log.w(TAG, "[miguo] $method /$path 失败：${e.javaClass.simpleName}: ${e.message}")
+            Log.w(TAG, "[miguo] $method /$path 失败：${e.javaClass.simpleName}: ${DeepSeekProviderContract.redactLog(e.message)}")
             ApiResult.Network(describe(e))
         }
     }

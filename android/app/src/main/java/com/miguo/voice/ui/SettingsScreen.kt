@@ -173,6 +173,8 @@ fun SettingsScreen(model: AppModel, onDone: () -> Unit) {
             if (normalized != address.trim()) {
                 ZenHint("对话地址将保存为：$normalized（已把全角符号/空格换成半角）")
             }
+            // 此框是米果会话凭证（MEMORY_API_KEY / 登录后的可吊销凭证），不是 DeepSeek。
+            // DEEPSEEK_API_KEY 只允许出现在服务端环境变量，禁止写入本页、APK 或日志。
             ZenField(
                 value = apiKey,
                 onValueChange = { apiKey = it },
